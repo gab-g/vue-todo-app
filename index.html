@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vue Todo</title>
+</head>
+<body>
+    <div id="app">
+        <h1>Todo App</h1>
+        <input type="text" v-model="inputText" v-on:keyup.enter="addItem">
+        <button v-on:click="fetchItems">add</button>
+        <div>
+            <ul>
+                <li v-for="(item, idx) in todoItems">
+                    {{ item }}
+                    <button v-on:click="removeItem(item, idx)">remove</button>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script>
+        new Vue({
+            created: function() {   //인스턴스가 생성되었을 때 실행됨
+                this.fetchItems();
+            },
+            el: '#app',
+            data: {
+                inputText: '',
+                todoItems: []
+            },
+            methods: {
+                addItem: function(event) {
+                    // if(event.keyCode === 13){    //v-on:keyup.enter 로 구현
+                        // console.log(event);
+                        var value = this.inputText;
+                        localStorage.setItem(value, value);
+                        this.inputText = '';
+                        this.todoItems.push(value);
+                    // }
+
+                    //jQuery
+                    // $.ajax({
+                    //     type: 'POST'
+                    // })
+
+                    //axios
+                    // axios.post('주소', this.inputText);
+                },
+                fetchItems: function() {
+                    //axios.get('/todos')
+                    for(var i=0; i<localStorage.length; i++){
+                        var value = localStorage.key(i)
+                        console.log(value);
+                        this.todoItems.push(value);
+                    }
+                },
+                removeItem: function(item, idx) {
+                    //axios.delete('todos/' + idx);
+                    console.log(item, idx);
+                    this.todoItems.splice(idx, 1);
+                    localStorage.removeItem(item);
+                }
+                /*
+                    JSON.parse()
+                    JSON.stringify()
+                */
+            }
+        });
+    </script>
+</body>
+</html>
