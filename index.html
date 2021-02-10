@@ -4,20 +4,38 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.10/css/all.css" integrity="sha384-+d0P83n9kaQMCwj8F4RJB66tzIwOKmrdb46+porD/OvrJ+37WqIM7UoBtwHO6Nlg"
+      crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css?family=Ubuntu" rel="stylesheet">
     <title>Vue Todo</title>
+    <link rel="stylesheet" href="main.css">
 </head>
 <body>
     <div id="app">
         <h1>Todo App</h1>
-        <input type="text" v-model="inputText" v-on:keyup.enter="addItem">
-        <button v-on:click="fetchItems">add</button>
-        <div>
+        <div class="inputBox shadow">
+            <!-- v-on: => @ 로 변경 가능 -->
+            <input type="text" v-model="inputText" v-on:keyup.enter="addItem">
+            <span class="addContainer" @click="addItem">
+                <i class="addBtn fas fa-plus" aria-hidden="true"></i>
+            </span>
+        </div>
+        <div class="listBox">
+            <!-- <transition-group name="list" tag="ul"> -->
             <ul>
-                <li v-for="(item, idx) in todoItems">
+                <li v-for="(item, idx) in todoItems" class="shadow">
                     {{ item }}
-                    <button v-on:click="removeItem(item, idx)">remove</button>
+                    <span class="removeBtn" type="button" v-on:click="removeItem(item, idx)">
+                        <i class="far fa-trash-alt"></i>
+                    </span>
                 </li>
+            <!-- </transition-group> -->
             </ul>
+        </div>
+        <div class="footerBox">
+            <span class="clearAllBtn" @click="removeAllItem">Clear All</span>
         </div>
     </div>
 
@@ -34,14 +52,15 @@
             },
             methods: {
                 addItem: function(event) {
+                    if(this.inputText === '') return;
                     // if(event.keyCode === 13){    //v-on:keyup.enter 로 구현
-                        // console.log(event);
                         var value = this.inputText;
                         localStorage.setItem(value, value);
                         this.inputText = '';
                         this.todoItems.push(value);
                     // }
 
+                    /************* 서버와 통신 시 사용 S **************/
                     //jQuery
                     // $.ajax({
                     //     type: 'POST'
@@ -49,6 +68,7 @@
 
                     //axios
                     // axios.post('주소', this.inputText);
+                    /************* 서버와 통신 시 사용 E **************/
                 },
                 fetchItems: function() {
                     //axios.get('/todos')
@@ -63,6 +83,10 @@
                     console.log(item, idx);
                     this.todoItems.splice(idx, 1);
                     localStorage.removeItem(item);
+                },
+                removeAllItem: function(){
+                    this.todoItems = [];
+                    localStorage.clear();
                 }
                 /*
                     JSON.parse()
